@@ -19,6 +19,11 @@ var showObject = true;
 
 var snapshot = [];
 
+//For animation
+var mesh;
+var mixer = new THREE.AnimationMixer(mesh);
+var clips = mesh.animations;
+
 let constraints = {
   video: {
     facingMode: {
@@ -270,6 +275,19 @@ function viewObject(){
     else
         showObject = true;
 }
+
+//Animation
+function update(){
+  mixer.update(deltaSeconds);
+}
+
+//Play a specific animation
+var clip = THREE.AnimationClip.findByName(clips, 'dance');
+var action = mixer.clipAction(clip);
+action.play();
+
+//remark for tha animation looping
+//loop modes: THREE.LoopOnce, THREE.LoppRepeat, THREE.LoopPingPong
 
 // function swiped(event) {
 //   console.log(event);
