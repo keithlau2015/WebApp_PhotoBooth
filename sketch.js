@@ -287,7 +287,7 @@ var action = mixer.clipAction(clip);
 action.play();
 
 //remark for tha animation looping
-//loop modes: THREE.LoopOnce, THREE.LoppRepeat, THREE.LoopPingPong
+//loop modes: THREE.LoopOnce, THREE.LoppRepeat, THREE.LoopPingPong(.repetition Default is infinity)
 
 // function swiped(event) {
 //   console.log(event);
