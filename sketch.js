@@ -19,11 +19,6 @@ var showObject = true;
 
 var snapshot = [];
 
-//For animation
-var mesh;
-var mixer = new THREE.AnimationMixer(mesh);
-var clips = mesh.animations;
-
 let constraints = {
   video: {
     facingMode: {
@@ -40,7 +35,7 @@ let constraints = {
 };
 
 function preload(){
-    penguin = loadModel('10033_Penguin_v1_iterations-2.obj');
+    penguin = loadModel('10033_Penguin_v1_iterations-2-withAnimation.fbx');
     img = loadImage('10033_Penguin_v1_Diffuse.jpg');
 
     tempModX = -(modX - displayWidth/2);
@@ -275,16 +270,6 @@ function viewObject(){
     else
         showObject = true;
 }
-
-//Animation
-function update(){
-  mixer.update(deltaSeconds);
-}
-
-//Play a specific animation
-var clip = THREE.AnimationClip.findByName(clips, 'dance');
-var action = mixer.clipAction(clip);
-action.play();
 
 //remark for tha animation looping
 //loop modes: THREE.LoopOnce, THREE.LoppRepeat, THREE.LoopPingPong(.repetition Default is infinity)
