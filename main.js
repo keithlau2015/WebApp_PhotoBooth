@@ -12,6 +12,7 @@ var strDownloadMime = "image/octet-stream";
 
 //Init
 initWebCam();
+initButton();
 animate();
 
 //Functions
@@ -50,7 +51,7 @@ function initWebCam() {
     }
     */
 
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer = new THREE.WebGLRenderer( { antialias: true , preserveDrawingBuffer: true} );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
@@ -80,11 +81,14 @@ function initWebCam() {
 }
 
 function initButton(){
-    var saveButton;
-    renderer = new THREE.WebGLRenderer({
-        preserveDrawingBuffer: true;
-    });
-    
+    var saveButton = doucment.createElement('div');
+    saveButton.style.position = 'absolute';
+    saveButton.style.bottom = '10px';
+    saveButton.style.width = '100%';
+    saveButton.style.textAlign = 'center';
+    saveButton.innerHTML = '<a href="#" id="saveButton"> Save </a>';
+    document.body.appendChild(saveButton);
+    document.getElementByID("saveButton").addEventListener('click', saveAsImage);
 }
 
 function onClickCapturePhotoButton(){
