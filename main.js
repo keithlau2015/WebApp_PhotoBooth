@@ -8,14 +8,14 @@ var renderer;
 var scene;
 var camera;
 var video;
+var strDownloadMime = "image/octet-stream";
 
 //Init
-init();
+initWebCam();
 animate();
 
 //Functions
-function init() {
-
+function initWebCam() {    
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100 );
     camera.position.z = 0.01;
 
@@ -33,12 +33,11 @@ function init() {
     var radius = 32;
 
     var mesh = new THREE.Mesh( geometry, material );
-    //mesh.position.setFromSphericalCoords( radius, phi, theta );
     mesh.position.set(0, 0, -5);
     mesh.lookAt( camera.position );
     scene.add(mesh);
 
-    /*
+    /* This code is setting player at the spherical center to view the world(cam)
     for ( var i = 1, l = count; i <= l; i ++ ) {
 
         var phi = Math.acos( - 1 + ( 2 * i ) / l );
@@ -48,7 +47,6 @@ function init() {
         mesh.position.setFromSphericalCoords( radius, phi, theta );
         mesh.lookAt( camera.position );
         scene.add( mesh );
-
     }
     */
 
@@ -78,6 +76,38 @@ function init() {
 
     } else {
         console.error( 'MediaDevices interface not available.' );
+    }
+}
+
+function initButton(){
+    var saveButton;
+    renderer = new THREE.WebGLRenderer({
+        preserveDrawingBuffer: true;
+    });
+    
+}
+
+function onClickCapturePhotoButton(){
+    var imgData;
+    try{
+        imgData = render.domElement.toDataURL("image/jpeg");
+        saveFile(imgData.replace("image/jpeg", strDonwloadMime), "test.jpg");
+    } catch(e){
+        console.log(3);
+        return;
+    }    
+}
+
+var saveFile = function (strData, filename){
+    var link = document.createElement('a');
+    if(typeof link.download === "string"){
+        document.body.appendChild(link);
+        link.download = filename;
+        link.href = strData;
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        location.replace(uri);
     }
 }
 
