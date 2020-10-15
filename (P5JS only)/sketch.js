@@ -1,6 +1,9 @@
 let capture;
 let img;
 
+var adjustS = false
+var adjustR = false;
+var tmpS, tmpR;
 var s = 1.0;
 var r = 0;
 var direction;
@@ -52,8 +55,6 @@ function setup() {
   imgY = -4/3*displayWidth/2 + imgH/2 ;
   tempImgX = -(imgX - displayWidth/2);
   tempImgY = imgY + displayHeight/2;
-  tmpR = r;
-  tmpS = s;
 
   div = createDiv('');
   div.style("background-color","#fee167");
@@ -70,6 +71,7 @@ function setup() {
   hammer.get('rotate').set({ enable: true });  
   hammer.on("pinch", scaleRect);
   hammer.on("rotate", rotateRect);
+
 
   // hammer.get('swipe').set({
   //   direction: Hammer.DIRECTION_ALL
@@ -138,23 +140,41 @@ function draw() {
   imgX = constrain(imgX,  -displayWidth/2 + imgW/2, displayWidth/2 - imgW/2);
   imgY = constrain(imgY, - displayHeight /2 + imgH/2, - displayHeight /2 +  4/3*displayWidth -  imgH/2);
 
-  if(degrees(r) === 360)
-    r = 0;
-
   if(constraints.video.facingMode.exact == "user")
     translate(imgX, imgY);
   else
     translate(imgX, imgY);
+
+  if(degrees(tmpR) >= 360)
+    r = 0;
+  else if(tmpR > r)
+    r = tmpR;
 
   if(constraints.video.facingMode.exact == "user")
     rotate(-r);
   else
     rotate(r);
   
-  s = constrain(s, 1 , 1.5);
+  if(adjustR){
+    tmpR += r;
+    adjustR = false;
+  }
+  
+  tmpS = constrain(tmpS, 1 , 1.5);
+
+  if(tmpS > s)
+    s = tmpS;
+  else
+    s -= tmpS;
+
   imgW = initWidth * s;
   imgH = initHeight * s;
   scale(s);
+
+  if(adjustS){
+    tmpS += s;
+    adjustS = false;
+  }
 
   if(showObject == true){
       imageMode(CENTER);
@@ -262,7 +282,7 @@ function switchCamera(){
 }
 
 function rotateRect(event) {
-
+  adjustR = true;
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
@@ -276,7 +296,8 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            r += radians(event.rotation - 180);
+            tmpR = radians(event.rotation - 180);
+            
             //pR = r;
         //}
     }
@@ -284,13 +305,15 @@ function rotateRect(event) {
 
 
 function scaleRect(event) {
+  adjustS = true;
     //scaleImg = true;
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            s += event.scale;
+            tmpS = event.scale;
+            
         //}
     }
 
