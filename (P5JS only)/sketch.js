@@ -1,6 +1,7 @@
 let capture;
 let img;
 
+var tmpS, tmpR;
 var s = 1.0;
 var r = 0;
 var direction;
@@ -52,6 +53,8 @@ function setup() {
   imgY = -4/3*displayWidth/2 + imgH/2 ;
   tempImgX = -(imgX - displayWidth/2);
   tempImgY = imgY + displayHeight/2;
+  tmpR = r;
+  tmpS = s;
 
   div = createDiv('');
   div.style("background-color","#fee167");
@@ -134,6 +137,9 @@ function draw() {
   imgX = constrain(imgX,  -displayWidth/2 + imgW/2, displayWidth/2 - imgW/2);
   imgY = constrain(imgY, - displayHeight /2 + imgH/2, - displayHeight /2 +  4/3*displayWidth -  imgH/2);
 
+  if(r !== tmpR)
+    r = tmpR;
+
   if(constraints.video.facingMode.exact == "user")
     translate(imgX, imgY);
   else
@@ -144,6 +150,12 @@ function draw() {
   else
     rotate(r);
 
+  hammer.on("pinch", scaleRect);
+  hammer.on("rotate", rotateRect);
+
+  if(s !== tmpS)
+    s = tmpS;
+  
   s = constrain(s, 1 , 1.5);
   imgW = initWidth * s;
   imgH = initHeight * s;
@@ -153,9 +165,6 @@ function draw() {
       imageMode(CENTER);
       image(img, 0,0, imgW, imgH);
   }
-
-  hammer.on("pinch", scaleRect);
-  hammer.on("rotate", rotateRect);
 
   pop();
 
@@ -272,7 +281,7 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            r = radians(event.rotation - 180);
+            tmpR = radians(event.rotation - 180);
             //pR = r;
         //}
     }
@@ -286,7 +295,7 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            s = event.scale;
+            tmpS = event.scale;
         //}
     }
 
