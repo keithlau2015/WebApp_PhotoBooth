@@ -1,7 +1,6 @@
 let capture;
 let img;
 
-var tmpS, tmpR;
 var s = 1.0;
 var r = 0;
 var direction;
@@ -68,7 +67,9 @@ function setup() {
   // document.body registers gestures anywhere on the page
   hammer = new Hammer(document.body, options);
   hammer.get('pinch').set({ enable: true });
-  hammer.get('rotate').set({ enable: true });
+  hammer.get('rotate').set({ enable: true });  
+  hammer.on("pinch", scaleRect);
+  hammer.on("rotate", rotateRect);
 
   // hammer.get('swipe').set({
   //   direction: Hammer.DIRECTION_ALL
@@ -137,8 +138,8 @@ function draw() {
   imgX = constrain(imgX,  -displayWidth/2 + imgW/2, displayWidth/2 - imgW/2);
   imgY = constrain(imgY, - displayHeight /2 + imgH/2, - displayHeight /2 +  4/3*displayWidth -  imgH/2);
 
-  if(r !== tmpR)
-    r = tmpR;
+  if(degrees(r) === 360)
+    r = 0;
 
   if(constraints.video.facingMode.exact == "user")
     translate(imgX, imgY);
@@ -149,12 +150,6 @@ function draw() {
     rotate(-r);
   else
     rotate(r);
-
-  hammer.on("pinch", scaleRect);
-  hammer.on("rotate", rotateRect);
-
-  if(s !== tmpS)
-    s = tmpS;
   
   s = constrain(s, 1 , 1.5);
   imgW = initWidth * s;
@@ -281,7 +276,7 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            tmpR = radians(event.rotation - 180);
+            r += radians(event.rotation - 180);
             //pR = r;
         //}
     }
@@ -295,7 +290,7 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            tmpS = event.scale;
+            s += event.scale;
         //}
     }
 
