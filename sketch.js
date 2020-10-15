@@ -1,6 +1,6 @@
 let capture;
 let angle = 0;
-let penguin;
+var gif_loadImg, gif_createImg;
 
 var s = 1.0;
 var r = 0;
@@ -35,9 +35,11 @@ let constraints = {
 };
 
 function preload(){
-    penguin = loadModel('10033_Penguin_v1_iterations-2-withAnimation.fbx');
-    img = loadImage('10033_Penguin_v1_Diffuse.jpg');
-
+    //penguin = loadModel('10033_Penguin_v1_iterations-2-withAnimation.fbx');
+    //img = loadImage('10033_Penguin_v1_Diffuse.jpg');
+    gif_loadImg = loadImage(".gif");
+    gif_createImg = createImg(".gif");
+  
     tempModX = -(modX - displayWidth/2);
     tempModY = modY + displayHeight/2;
 }
@@ -141,7 +143,7 @@ function draw() {
   texture(img);
   noStroke();
   if(showObject == true)
-    model(penguin);
+    gif_create.position(50,350);
 
   //Shadow
   // noStroke();
@@ -200,11 +202,7 @@ function touchMoved(){
              modY = (touches[i].y - displayHeight/2);
              tempModY = modY + displayHeight/2;
         }
-
-
     }
-
-
     return false;
 }
 
