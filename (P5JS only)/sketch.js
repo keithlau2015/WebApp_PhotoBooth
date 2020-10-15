@@ -21,6 +21,8 @@ var showObject = true;
 
 var snapshot = [];
 
+var hammer;
+
 let constraints = {
   video: {
     facingMode: {
@@ -61,11 +63,9 @@ function setup() {
   };
 
   // document.body registers gestures anywhere on the page
-  var hammer = new Hammer(document.body, options);
+  hammer = new Hammer(document.body, options);
   hammer.get('pinch').set({ enable: true });
   hammer.get('rotate').set({ enable: true });
-  hammer.on("pinch", scaleRect);
-  hammer.on("rotate", rotateRect);
 
   // hammer.get('swipe').set({
   //   direction: Hammer.DIRECTION_ALL
@@ -153,6 +153,9 @@ function draw() {
       imageMode(CENTER);
       image(img, 0,0, imgW, imgH);
   }
+
+  hammer.on("pinch", scaleRect);
+  hammer.on("rotate", rotateRect);
 
   pop();
 
@@ -270,7 +273,6 @@ function rotateRect(event) {
 
             //console.log(direction);
             r = radians(event.rotation - 180);
-            s = event.scale;
             //pR = r;
         //}
     }
@@ -284,7 +286,6 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            r = radians(event.rotate - 180);
             s = event.scale;
         //}
     }
