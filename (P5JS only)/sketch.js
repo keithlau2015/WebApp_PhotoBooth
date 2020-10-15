@@ -269,7 +269,7 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            r = radians(event.rotation- 180);
+            r = radians(event.rotation);
             //pR = r;
         //}
     }
