@@ -269,7 +269,8 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            r = radians(event.rotation);
+            r = radians(event.rotation - 180);
+            s = event.scale;
             //pR = r;
         //}
     }
@@ -283,7 +284,7 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-
+            r = radians(event.rotate - 180);
             s = event.scale;
         //}
     }
