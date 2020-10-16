@@ -67,7 +67,9 @@ function setup() {
 
   // document.body registers gestures anywhere on the page
   hammer = new Hammer(document.body, options);
-  hammer.get('pinch').set({ enable: true });
+  hammer.get('pinchin').set({ enable: true });
+  hammer.get('pinichout').set({enable: true});
+  
   hammer.get('rotate').set({ enable: true });  
   hammer.on("pinch", scaleRect);
   hammer.on("rotate", rotateRect);
