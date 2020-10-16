@@ -4,6 +4,7 @@ let img;
 var s = 1.0;
 var r = 0;
 var tmpR = 0;
+var tmpS = s;
 
 var direction;
 var pR;
@@ -69,8 +70,9 @@ function setup() {
   hammer.get('pinch').set({ enable: true });
   hammer.get('rotate').set({ enable: true });
 
-  hammer.on("pinchin", scaleIncreaseRect);
-  hammer.on("pinchout", scaleDecreaseRect);
+  hammer.on("pinchstart", scaleStart);
+  hammer.on("pinchmove", scaleRect);
+  hammer.on("pinchend", scaleEnd);
 
   hammer.on("rotatestart", rotateStart);
   hammer.on("rotatemove", rotateRect);
@@ -153,6 +155,7 @@ function draw() {
   else
     rotate(r);
 
+  
   imgW = initWidth * s;
   imgH = initHeight * s;
   scale(s);
@@ -294,28 +297,23 @@ function rotateStart(){
 }
 
 
-function scaleIncreaseRect(event) {
+function scaleRect(event) {
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            s += event.scale;
-            
+            tmpS = event.scale;
         //}
     }
 }
 
-function scaleDecreaseRect(event) {
-  for (var i = 0; i < touches.length; i++) {
-      //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
-      //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
-          //console.log(event.scale);
-          //THIS ONE NEED CHANGE
-          s -= event.scale;
-          
-      //}
-  }
+function scaleStart(){
+  tmpS = s;
+}
+
+function scaleEnd(){
+  s = tmpS;
 }
 
 function viewObject(){
