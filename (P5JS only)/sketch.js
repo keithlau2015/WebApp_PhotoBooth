@@ -1,15 +1,16 @@
 let capture;
 let img;
+let pics = [];
 
 var s = 1.0;
 var r = 0;
+
 var tmpR = 0;
 var tmpS = s;
 
 var direction;
 var pR;
 
-var value = 0;
 var imgX = 0;
 var pX;
 var pY;
@@ -20,11 +21,20 @@ var initWidth;
 var initHeight;
 
 var showObject = true;
+var blink = false;
 //var scaleImg = false;
 
-var snapshot = [];
-
 var hammer;
+var adjustS = false
+var adjustR = false;
+var tmpS = s, tmpR = r;
+
+//Timer
+var tiempoEspera;
+var tiempoInicio;
+
+let shutter;
+
 
 let constraints = {
   video: {
@@ -46,7 +56,12 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(displayWidth, displayHeight, WEBGL);
+  canvas  = createCanvas(displayWidth, displayHeight, WEBGL);
+
+  shutter = loadSound('sound/shutter.wav');
+
+  tiempoInicio = 0;
+  tiempoEspera = 1000; // 3 segundos
 
   imgW = img.width / 2;
   imgH = img.height / 2;
@@ -127,11 +142,48 @@ function setup() {
  // switchCameraButton.position(displayWidth/2 +100, displayHeight/2 + 147.5);
  showObjectButton.position(displayWidth/2 - displayWidth/2/2-65, 4/3*displayWidth+(windowHeight-(4/3*displayWidth))/2 - switchCameraButton.height/2);
  showObjectButton.mousePressed(viewObject);
+
+ retakeButton = createImg('img/reload.png');
+ retakeButton.size(65,65);
+ retakeButton.style("background-color","#fff");
+ retakeButton.style("border-radius","50%");
+ // switchCameraButton.position(displayWidth/2 +100, displayHeight/2 + 147.5);
+ retakeButton.position(displayWidth/2 + displayWidth/2/2, 4/3*displayWidth+(windowHeight-(4/3*displayWidth))/2 - retakeButton.height/2);
+ retakeButton.mousePressed(retakeImage);
+
+ downloadButton = createImg('img/download.png');
+ downloadButton.mousePressed(downloadImage);
+ downloadButton.size(80,80);
+ downloadButton.position(displayWidth/2 - downloadButton.width/2, 4/3*displayWidth+(windowHeight-(4/3*displayWidth))/2 - downloadButton.height/2);
+ //takePhotoButtonOut.position(displayWidth/2 - 40, displayHeight/2 + 140);
+ downloadButton.style("background-color","#fff");
+ downloadButton.style("border-radius","50%");
+
+ facebookButton = createElement('div', '<div style="background-color: rgb(93, 125, 174); border-radius: 6px; display: inline-block;"><a href="javascript:window.open(&quot;https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.cimptech.com%2Fwebproject%2F&amp;quote=This%20is%20web%20Project!&amp;picture=https%3A%2F%2Fwww.cimptech.com%2Fcms%2Fimg%2Flogo.png&amp;title=%E6%88%91%E5%88%86%E4%BA%AB%E7%B5%A6%E4%BD%A0%EF%BC%81(title)&amp;description=%E5%88%86%E4%BA%AB%E7%B6%B2%E9%A0%81%E6%8A%80%E8%A1%93%20(description)&amp;caption=CMS%E5%90%83%E4%BB%80%E9%BA%BC%EF%BC%9F%20(caption)&quot;, &quot;_blank&quot;, &quot;toolbar=0,status=0&quot;)" style="font-size: 20px; font-weight: bold; text-align: center; color: rgb(255, 255, 255); border: 1px solid rgb(255, 255, 255); padding: 2px 10px; cursor: pointer; text-decoration: none; display: block;"><img src="https://pulipulichen.github.io/blog-pulipuli-info-data-2017/04/facebook-share/facebook-logo-white.svg" width="20" height="20" style="margin-top: 3px; margin-bottom: -2px;"> 分享</a></div>');
+ facebookButton.size(100,65);
+ // switchCameraButton.position(displayWidth/2 +100, displayHeight/2 + 147.5);
+ facebookButton.position(displayWidth/2 - displayWidth/2/2-65, 4/3*displayWidth+(windowHeight-(4/3*displayWidth))/2 - facebookButton.height/2/2);
+ //facebookButton.mousePressed(viewObject);
 }
 
 function draw() {
-//console.log(scaleImg);
-  background(value);
+if ( pics.length >= 1 ){
+    takePhotoButtonOut.hide();
+    showObjectButton.hide();
+    switchCameraButton.hide();
+    retakeButton.show();
+    downloadButton.show();
+    facebookButton.show();
+} else {
+    takePhotoButtonOut.show();
+    showObjectButton.show();
+    switchCameraButton.show();
+    retakeButton.hide();
+    downloadButton.hide();
+    facebookButton.hide();
+}
+
+  background(0);
 
   //scaleImg = false;
 
@@ -150,20 +202,22 @@ function draw() {
   else
     translate(imgX, imgY);
 
-  if(constraints.video.facingMode.exact == "user")
-    rotate(-r);
-  else
-    rotate(r);
+    //preview of rotate & scale
+    if(constraints.video.facingMode.exact == "user")
+      rotate(-r);
+    else
+      rotate(r);
 
   
   imgW = initWidth * s;
   imgH = initHeight * s;
   scale(s);
 
-  if(showObject == true){
-      imageMode(CENTER);
-      image(img, 0,0, imgW, imgH);
-  }
+
+    if(showObject == true){
+        imageMode(CENTER);
+        image(img, 0,0, imgW, imgH);
+    }
 
   pop();
 
@@ -171,7 +225,25 @@ function draw() {
   //   //print(snapshot.length);
   // image(snapshot, 0-100, 0-100);
   // }
-}
+  if ( pics.length == 1 ){
+    push();
+    scale(-1.0,1.0);
+    image( pics[pics.length-1],  0 - displayWidth/2 , 0 - displayHeight/2,  displayWidth, 4/3*displayWidth );
+    pop();
+
+    if(blink == true){
+        fill(0);
+        rect(0 - displayWidth/2 , 0 - displayHeight/2,displayWidth, displayHeight);
+
+        if(millis() - tiempoInicio > tiempoEspera){
+            tiempoInicio = millis();
+            blink = false;
+        }
+    }
+  }
+
+
+ }
 
 /* resizes the canvas if the phone gets flipped so that
  * the browser orientation changes from landscape to
@@ -246,12 +318,23 @@ function touchMoved(){
 // }
 
 function takeImage() {
-  //Display to the canvas one image
-  //of the video feed when the user presses the button
-  //userPicture = image(capture, 40, 0);
-  snapshot = capture.get();
-  //snapshot.save('photo', 'jpg');
-  //saveCanvas('myCanvas', 'png');
+  if ( pics.length < 1 ){
+      let img = canvas.get( 0, 0, displayWidth, 4/3*displayWidth );
+      pics.push(img);
+
+      blink = true;
+      if(shutter.isPlaying() == false)
+        shutter.play();
+    //else stop the sound and play again
+  }
+}
+
+function retakeImage() {
+  pics = [];
+}
+
+function downloadImage() {
+  saveCanvas('myCanvas', 'jpg');
 }
 
 function switchCamera(){
@@ -280,11 +363,12 @@ function rotateRect(event) {
 
             //console.log(direction);
             tmpR = radians(event.rotation - 180);
-            
+
             //pR = r;
         //}
     }
 }
+
 
 function rotateEnd(){
   r += tmpR;
