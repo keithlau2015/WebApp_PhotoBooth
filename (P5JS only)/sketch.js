@@ -1,11 +1,10 @@
 let capture;
 let img;
 
-var adjustS = false
-var adjustR = false;
-var tmpS, tmpR;
 var s = 1.0;
 var r = 0;
+var tmpR = 0;
+
 var direction;
 var pR;
 
@@ -67,13 +66,24 @@ function setup() {
 
   // document.body registers gestures anywhere on the page
   hammer = new Hammer(document.body, options);
+<<<<<<< Updated upstream
   hammer.get('pinchin').set({ enable: true });
   hammer.get('pinichout').set({enable: true});
   
   hammer.get('rotate').set({ enable: true });  
   hammer.on("pinch", scaleRect);
   hammer.on("rotate", rotateRect);
+=======
+  hammer.get('pinch').set({ enable: true });
+  hammer.get('rotate').set({ enable: true });
 
+  hammer.on("pinchin", scaleIncreaseRect);
+  hammer.on("pinchout", scaleDecreaseRect);
+>>>>>>> Stashed changes
+
+  hammer.on("rotatestart", rotateStart);
+  hammer.on("rotatemove", rotateRect);
+  hammer.on("rotateend", rotateEnd);
 
   // hammer.get('swipe').set({
   //   direction: Hammer.DIRECTION_ALL
@@ -147,36 +157,14 @@ function draw() {
   else
     translate(imgX, imgY);
 
-  if(degrees(tmpR) >= 360)
-    r = 0;
-  else if(tmpR > r)
-    r = tmpR;
-
   if(constraints.video.facingMode.exact == "user")
     rotate(-r);
   else
     rotate(r);
-  
-  if(adjustR){
-    tmpR += r;
-    adjustR = false;
-  }
-  
-  tmpS = constrain(tmpS, 1 , 1.5);
-
-  if(tmpS > s)
-    s = tmpS;
-  else
-    s -= tmpS;
 
   imgW = initWidth * s;
   imgH = initHeight * s;
   scale(s);
-
-  if(adjustS){
-    tmpS += s;
-    adjustS = false;
-  }
 
   if(showObject == true){
       imageMode(CENTER);
@@ -284,7 +272,6 @@ function switchCamera(){
 }
 
 function rotateRect(event) {
-  adjustR = true;
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
@@ -305,20 +292,39 @@ function rotateRect(event) {
     }
 }
 
+function rotateEnd(){
+  r += tmpR;
+  if(degrees(r) >= 360)
+    r = r - radians(360);
+}
 
-function scaleRect(event) {
-  adjustS = true;
-    //scaleImg = true;
+function rotateStart(){
+  tmpR += r;
+}
+
+
+function scaleIncreaseRect(event) {
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            tmpS = event.scale;
+            s += event.scale;
             
         //}
     }
+}
 
+function scaleDecreaseRect(event) {
+  for (var i = 0; i < touches.length; i++) {
+      //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
+      //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
+          //console.log(event.scale);
+          //THIS ONE NEED CHANGE
+          s -= event.scale;
+          
+      //}
+  }
 }
 
 function viewObject(){
