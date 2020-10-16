@@ -211,7 +211,6 @@ if ( pics.length >= 1 ){
   
   imgW = initWidth * s;
   imgH = initHeight * s;
-  scale(s);
 
 
     if(showObject == true){
@@ -388,6 +387,7 @@ function scaleRect(event) {
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
             tmpS = event.scale;
+            scale(tmpS);
         //}
     }
 }
@@ -398,6 +398,7 @@ function scaleStart(){
 
 function scaleEnd(){
   s = tmpS;
+  scale(s);
 }
 
 function viewObject(){
