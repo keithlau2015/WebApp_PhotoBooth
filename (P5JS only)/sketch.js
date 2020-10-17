@@ -226,10 +226,10 @@ if ( pics.length >= 1 ){
       rotate(r);
   }
 
-    if(showObject == true){
-        imageMode(CENTER);
-        image(img, 0,0, imgW, imgH);
-    }
+  if(showObject == true){
+      imageMode(CENTER);
+      image(img, 0,0, imgW, imgH);
+  }
 
   pop();
 
@@ -400,7 +400,6 @@ function scaleRect(event) {
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
             tmpS = event.scale;
-            scale(tmpS);
         //}
     }
 }
