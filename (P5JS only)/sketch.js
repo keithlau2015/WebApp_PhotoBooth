@@ -7,6 +7,8 @@ var r = 0;
 
 var tmpR = 0;
 var tmpS = s;
+var previewS = false;
+var previewR = false;
 
 var direction;
 var pR;
@@ -202,16 +204,27 @@ if ( pics.length >= 1 ){
   else
     translate(imgX, imgY);
 
-    //preview of rotate & scale
+    //preview of rotate & scale  
+  imgW = initWidth * s;
+  imgH = initHeight * s;
+
+  if(previewS)
+    scale(tmpS);
+
+  if(previewR)
+  {
+    if(constraints.video.facingMode.exact == "user")
+      rotate(-tmpR);
+    else
+      rotate(tmpR);
+  }
+  else
+  {
     if(constraints.video.facingMode.exact == "user")
       rotate(-r);
     else
       rotate(r);
-
-  
-  imgW = initWidth * s;
-  imgH = initHeight * s;
-
+  }
 
     if(showObject == true){
         imageMode(CENTER);
@@ -371,12 +384,12 @@ function rotateRect(event) {
 
 function rotateEnd(){
   r += tmpR;
-  if(degrees(r) >= 360)
-    r = r - radians(360);
+  previewR = false;
 }
 
 function rotateStart(){
   tmpR += r;
+  previewR = true;
 }
 
 
@@ -394,10 +407,12 @@ function scaleRect(event) {
 
 function scaleStart(){
   tmpS = s;
+  previewS = true;
 }
 
 function scaleEnd(){
   s = tmpS;
+  previewS = false;
   scale(s);
 }
 
