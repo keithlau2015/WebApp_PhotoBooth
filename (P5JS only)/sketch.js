@@ -27,9 +27,6 @@ var blink = false;
 //var scaleImg = false;
 
 var hammer;
-var adjustS = false
-var adjustR = false;
-var tmpS = s, tmpR = r;
 
 //Timer
 var tiempoEspera;
@@ -210,7 +207,9 @@ if ( pics.length >= 1 ){
 
   if(previewS)
     scale(tmpS);
-
+  else
+    scale(s);
+  
   if(previewR)
   {
     if(constraints.video.facingMode.exact == "user")
@@ -374,7 +373,7 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            tmpR = radians(event.rotation - 180);
+            tmpR = radians(event.rotation - 180) + r;
 
             //pR = r;
         //}
@@ -383,12 +382,12 @@ function rotateRect(event) {
 
 
 function rotateEnd(){
-  r += tmpR;
+  r = tmpR;
   previewR = false;
 }
 
 function rotateStart(){
-  tmpR += r;
+  tmpR = r;
   previewR = true;
 }
 
@@ -399,7 +398,7 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            tmpS = event.scale;
+            tmpS = event.scale + s;
         //}
     }
 }
@@ -412,7 +411,6 @@ function scaleStart(){
 function scaleEnd(){
   s = tmpS;
   previewS = false;
-  scale(s);
 }
 
 function viewObject(){
