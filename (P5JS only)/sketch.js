@@ -206,16 +206,16 @@ if ( pics.length >= 1 ){
   imgH = initHeight * s;
 
   if(previewS)
-    scale(tmpS);
+    scale(tmpS + s);
   else
     scale(s);
   
   if(previewR)
   {
     if(constraints.video.facingMode.exact == "user")
-      rotate(-tmpR);
+      rotate(-tmpR + r);
     else
-      rotate(tmpR);
+      rotate(tmpR + r);
   }
   else
   {
@@ -373,7 +373,7 @@ function rotateRect(event) {
             //     direction = 0;
 
             //console.log(direction);
-            tmpR = radians(event.rotation - 180) + r;
+            tmpR = radians(event.rotation - 180);
 
             //pR = r;
         //}
@@ -398,7 +398,7 @@ function scaleRect(event) {
         //if(touches[i].x > tempImgX - imgW/2 && touches[i].x < tempImgX + imgW/2 &&  touches[i].y > tempImgY - imgH/2 && touches[i].y < tempImgY + imgH/2){
             //console.log(event.scale);
             //THIS ONE NEED CHANGE
-            tmpS = event.scale + s;
+            tmpS = event.scale;
         //}
     }
 }
