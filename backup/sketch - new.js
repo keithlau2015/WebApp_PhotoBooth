@@ -1,37 +1,41 @@
 let capture;
-let img;
+let angle = 0;
+var gif_loadImg, gif_createImg;
 let pics = [];
 
 var s = 1.0;
-var pS;
-var tempS = 1.0;
-
-var direction;
-var pR;
 var r = 0;
-var tempR = 0;
 
-var imgX = 0;
-var pX;
-var pY;
-var imgY = 0;
-var tempImgX;
-var tempImgY;
-var initWidth;
-var initHeight;
+var modX = 0;
+var modY = 0;
+var tempModX;
+var tempModY;
+var initWidth = 50;
+var initHeight = 100;
+var modWidth = 50;
+var modHeight = 100;
+
+//var direction;
+//var pR;
+
+//var imgX = 0;
+//var pX;
+//var pY;
+// var imgY = 0;
+// var tempImgX;
+// var tempImgY;
+// var initWidth;
+// var initHeight;
 
 var showObject = true;
 var blink = false;
 //var scaleImg = false;
-
-var hammer;
 
 //Timer
 var tiempoEspera;
 var tiempoInicio;
 
 let shutter;
-let canvas;
 
 
 let constraints = {
@@ -50,7 +54,11 @@ let constraints = {
 };
 
 function preload(){
-    img = loadImage('img/cartoon.gif');
+    gif_loadImg = loadImage(".gif");
+    gif_createImg = createImg(".gif");
+
+    tempModX = -(modX - displayWidth/2);
+    tempModY = modY + displayHeight/2;
 }
 
 function setup() {
@@ -61,13 +69,13 @@ function setup() {
   tiempoInicio = 0;
   tiempoEspera = 1000; // 3 segundos
 
-  imgW = img.width / 4;
-  imgH = img.height / 4;
-  initWidth = imgW;
-  initHeight = imgH;
-  imgY = -4/3*displayWidth/2 + imgH/2 ;
-  tempImgX = -(imgX - displayWidth/2);
-  tempImgY = imgY + displayHeight/2;
+  // imgW = img.width / 2;
+  // imgH = img.height / 2;
+  // initWidth = imgW;
+  // initHeight = imgH;
+  // imgY = -4/3*displayWidth/2 + imgH/2 ;
+  // tempImgX = -(imgX - displayWidth/2);
+  // tempImgY = imgY + displayHeight/2;
 
   div = createDiv('');
   div.style("background-color","#fee167");
@@ -78,6 +86,7 @@ function setup() {
     preventDefault: true
   };
 
+  // document.body registers gestures anywhere on the page
   // document.body registers gestures anywhere on the page
   var hammer = new Hammer(document.body, options);
   hammer.get('pinch').set({ enable: true });
@@ -182,41 +191,32 @@ if ( pics.length >= 1 ){
   if(constraints.video.facingMode.exact == "user")
     scale(-1.0,1.0);    // flip x-axis backwards
 
-
   image(capture, 0 - displayWidth/2 , 0 - displayHeight/2, displayWidth, 4/3*displayWidth);
 
   push();
   //translate(-(mouseX - displayWidth/2) , (mouseY - displayHeight/2));
-  imgX = constrain(imgX,  -displayWidth/2 + imgW/2, displayWidth/2 - imgW/2);
-  imgY = constrain(imgY, - displayHeight /2 + imgH/2, - displayHeight /2 +  4/3*displayWidth -  imgH/2);
+  modX = constrain(modX,  -displayWidth/2 + modWidth/2, displayWidth/2 - modWidth/2);
+  modY = constrain(modY, - displayHeight /2 + modHeight/2, - displayHeight /2 +  4/3*displayWidth);
 
   if(constraints.video.facingMode.exact == "user")
-    translate(imgX, imgY);
+    translate(modX, modY + modHeight/2);
   else
-    translate(imgX, imgY);
+    translate(-modX, modY);
 
-    //preview of rotate & scale
-  imgW = initWidth * s;
-  imgH = initHeight * s;
-
+  ambientLight(255);
+  //directionalLight(255,255,255,0,0,1);
+  rotateX(45);
+  //rotateY(angle * 1.3);
+  rotateZ(135);
   if(constraints.video.facingMode.exact == "user")
     rotate(-r);
   else
     rotate(r);
-
-
-    if(showObject == true){
-        imageMode(CENTER);
-        //NEED to fix image position
-        push();
-        if(constraints.video.facingMode.exact == "user")
-            scale(-1.0,1.0);
-        else {
-            scale(1.0,1.0);
-        }
-        image(img, 0,0, imgW, imgH);
-        pop();
-    }
+  scale(s);
+  texture(img);
+  noStroke();
+  if(showObject == true)
+    gif_create.position(50,350);
 
   pop();
 
@@ -226,11 +226,7 @@ if ( pics.length >= 1 ){
   // }
   if ( pics.length == 1 ){
     push();
-    if(constraints.video.facingMode.exact == "user")
-        scale(-1.0,1.0);
-    else {
-        scale(1.0,1.0);
-    }
+    scale(-1.0,1.0);
     image( pics[pics.length-1],  0 - displayWidth/2 , 0 - displayHeight/2,  displayWidth, 4/3*displayWidth );
     pop();
 
@@ -276,38 +272,21 @@ if ( pics.length >= 1 ){
 // }
 
 function touchMoved(){
-    //if(scaleImg == false){
-        for (var i = 0; i < touches.length; i++) {
-            //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
-            if(touches[0].x > tempImgX - imgW/2 && touches[0].x < tempImgX + imgW/2 &&  touches[0].y > tempImgY - imgH/2 && touches[0].y < tempImgY + imgH/2){
-                if(constraints.video.facingMode.exact == "user"){
-                    //let dX = int(dist(pX, 0, touches[0].x, 0));
-                    //console.log(d);
-                    imgX = -(touches[0].x - displayWidth/2 ) ;
-                    // if(touches[0].x > pX )
-                    //     imgX = imgX - dX;
-                    // else
-                    //     imgX = imgX + dX;
-                    //
-                     tempImgX = -(imgX - displayWidth/2);
-                    // pX = touches[0].x;
-                }
-                else
-                   imgX = (touches[0].x - displayWidth/2) ;
-
-                 // let dY = int(dist(pY, 0, touches[0].y, 0));
-                 imgY = (touches[0].y - displayHeight/2);
-                 // if(touches[0].y < pY )
-                 //     imgY = imgY - dY;
-                 // else
-                 //     imgY = imgY + dY;
-
-                 tempImgY = imgY + displayHeight/2;
-                 //pY = touches[0].y;
+    for (var i = 0; i < touches.length; i++) {
+        //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
+        if(touches[i].x > tempModX - modWidth/2 && touches[i].x < tempModX + modWidth/2 &&  touches[i].y > tempModY - modHeight/2 && touches[i].y < tempModY + modHeight/2){
+            if(constraints.video.facingMode.exact == "user"){
+                modX = -(touches[i].x - displayWidth/2) ;
+                tempModX = -(modX - displayWidth/2);
             }
-        //}
-    }
+            else
+               modX = (touches[i].x - displayWidth/2) ;
 
+
+             modY = (touches[i].y - displayHeight/2);
+             tempModY = modY + displayHeight/2;
+        }
+    }
     return false;
 }
 
@@ -333,16 +312,11 @@ function takeImage() {
 }
 
 function retakeImage() {
-
-capture = createCapture(constraints, function(stream) {
-     console.log(stream);
-});
-
   pics = [];
 }
 
 function downloadImage() {
-    pics[0].save('photo', 'png');
+  saveCanvas('myCanvas', 'jpg');
 }
 
 function switchCamera(){
@@ -359,39 +333,25 @@ function switchCamera(){
 function rotateRect(event) {
     for (var i = 0; i < touches.length; i++) {
         //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
-            //console.log(event);
-            pR = tempR;
-            tempR = radians(event.rotation);
-
-            if(pR > tempR){
-                console.log("left");
-                r = r - abs(abs(tempR) - 3.1415926536);
-            }else if(pR < tempR){
-                console.log("right");
-                r = r + abs(abs(tempR) - 3.1415926536);
-            }
-            //console.log(event.rotation);
-
+        if(touches[i].x > tempModX - modWidth/2 && touches[i].x < tempModX + modWidth/2 &&  touches[i].y > tempModY - modHeight/2 && touches[i].y < tempModY + modHeight/2){
+            console.log(event);
+            r = radians(event.rotation);
+        }
     }
 
 }
 
+
 function scaleRect(event) {
     for (var i = 0; i < touches.length; i++) {
-        //if(touches[0].x > tempImgX - imgW/2 && touches[0].x < tempImgX + imgW/2 &&  touches[0].y > tempImgY - imgH/2 && touches[0].y < tempImgY + imgH/2){
-            console.log(event.velocity);
-            //check enlarge or minimize
-            pS = tempS;
-            tempS = event.scale;
-
-            if(pS < tempS){
-                s = s + abs(tempS - 1);
-            }
-            else if(pS > tempS){
-                s = s - abs(tempS - 1);
-            }
-            s = constrain(s, 1 , 2);
-        //}
+        //NEED TO MATCH THE OBJECT SIZE WITH SCLAE
+        if(touches[i].x > tempModX - modWidth/2 && touches[i].x < tempModX + modWidth/2 &&  touches[i].y > tempModY - modHeight/2 && touches[i].y < tempModY + modHeight/2){
+            console.log(event);
+            s = constrain(s, 1 , 4.3);
+            s = event.scale;
+            modWidth = initWidth * s;
+            modHeight = initHeight * s;
+        }
     }
 
 }

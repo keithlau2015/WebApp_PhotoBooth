@@ -11,4 +11,16 @@ body{
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    overflow: hidden;
+}
+
+::-moz-selection {
+background-color: transparent;
+color: #000;
+}
+
+::selection {
+background-color: transparent;
+color: #000;
 }
